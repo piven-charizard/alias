@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "concurrently \"tsx server/index.ts\" \"vite --host\"",
     "dev:server": "tsx server/index.ts",
-    "dev:client": "vite --host"
+    "dev:client": "vite --host",
+    "build": "vite build",
+    "start": "tsx server/index.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -22,6 +24,7 @@
     "react-dom": "^19.1.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.19.4",
     "ws": "^8.18.0"
   },
   "devDependencies": {
@@ -36,7 +39,6 @@
     "concurrently": "^9.1.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
-    "tsx": "^4.19.4",
     "typescript": "^5.9.2",
     "vite": "^7.3.2"
   }

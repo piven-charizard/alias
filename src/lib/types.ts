@@ -60,21 +60,26 @@ export interface GameState {
 
 // WebSocket messages
 export type ClientMessage =
+  | { type: "create_room" }
+  | { type: "join_room"; roomCode: string }
   | { type: "join"; name: string }
   | { type: "start_game"; teamCount?: number; difficulty?: Difficulty | "mixed"; gameMode?: GameMode; maxRounds?: number | null }
   | { type: "start_round" }
   | { type: "correct" }
   | { type: "skip" }
-  | { type: "buzz" } // steal: player buzzes in
-  | { type: "steal_correct" } // host confirms steal guess correct
-  | { type: "steal_wrong" } // host confirms steal guess wrong
-  | { type: "steal_skip" } // host skips steal (no one guessed)
+  | { type: "buzz" }
+  | { type: "steal_correct" }
+  | { type: "steal_wrong" }
+  | { type: "steal_skip" }
   | { type: "next_round" }
   | { type: "reset_game" };
 
 export type ServerMessage =
-  | { type: "state"; state: GameState; playerId: string }
+  | { type: "state"; state: GameState; playerId: string; roomCode?: string }
   | { type: "state_update"; state: GameState }
+  | { type: "room_created"; roomCode: string }
+  | { type: "room_joined"; roomCode: string }
+  | { type: "room_error"; message: string }
   | { type: "error"; message: string };
 
 export const TEAM_CONFIGS = [

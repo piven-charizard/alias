@@ -11,15 +11,14 @@ import * as sounds from "@/lib/sounds";
 interface HostViewProps {
   gameState: GameState;
   send: (msg: ClientMessage) => void;
-  serverIp: string | null;
+  roomCode: string;
 }
 
-function getJoinUrl(serverIp: string | null): string {
-  if (serverIp && serverIp !== "localhost") return `http://${serverIp}:${window.location.port}`;
-  return `http://${window.location.hostname}:${window.location.port}`;
+function getJoinUrl(roomCode: string): string {
+  return `${window.location.origin}?room=${roomCode}`;
 }
 
-export function HostView({ gameState, send, serverIp }: HostViewProps) {
+export function HostView({ gameState, send, roomCode }: HostViewProps) {
   const { phase, players, teams } = gameState;
   const prevPhaseRef = useRef(phase);
   const prevPlayerCountRef = useRef(players.length);
@@ -39,7 +38,7 @@ export function HostView({ gameState, send, serverIp }: HostViewProps) {
 
   return (
     <div className="min-h-dvh p-6" dir="rtl">
-      {phase === "lobby" && <Lobby players={players} send={send} serverIp={serverIp} />}
+      {phase === "lobby" && <Lobby players={players} send={send} roomCode={roomCode} />}
       {phase === "teams" && <TeamsDisplay teams={teams} players={players} send={send} />}
       {(phase === "playing" || phase === "round_active") && <GameBoard gameState={gameState} />}
       {phase === "stealing" && <StealView gameState={gameState} send={send} />}
@@ -96,8 +95,8 @@ function RulesCard({ onClose }: { onClose: () => void }) {
 
 // ---- Lobby ----
 
-function Lobby({ players, send, serverIp }: { players: GameState["players"]; send: (msg: ClientMessage) => void; serverIp: string | null }) {
-  const url = getJoinUrl(serverIp);
+function Lobby({ players, send, roomCode }: { players: GameState["players"]; send: (msg: ClientMessage) => void; roomCode: string }) {
+  const url = getJoinUrl(roomCode);
   const [teamCount, setTeamCount] = useState(2);
   const [difficulty, setDifficulty] = useState<Difficulty | "mixed">("mixed");
   const [gameMode, setGameMode] = useState<GameMode>("score");
@@ -121,13 +120,13 @@ function Lobby({ players, send, serverIp }: { players: GameState["players"]; sen
           <HelpCircle className="h-8 w-8" />
         </button>
       </div>
-      <p className="text-xl text-muted-foreground -mt-4">סרקו את הברקוד כדי להצטרף</p>
+      <p className="text-xl text-muted-foreground -mt-4">סרקו את הברקוד או הכניסו את הקוד</p>
 
       <div className="flex flex-wrap items-start justify-center gap-12">
-        {/* QR Code */}
-        <Card className="p-8 shadow-lg">
-          <QRCodeSVG value={url} size={260} level="M" />
-          <p className="mt-3 text-center text-sm text-muted-foreground">{url}</p>
+        {/* QR Code + Room Code */}
+        <Card className="p-8 shadow-lg flex flex-col items-center gap-4">
+          <div className="text-6xl font-black tracking-[0.3em] text-primary">{roomCode}</div>
+          <QRCodeSVG value={url} size={220} level="M" />
         </Card>
 
         {/* Players list */}
